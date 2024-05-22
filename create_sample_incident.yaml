@@ -1,6 +1,6 @@
 ---
 - name: Create an incident in ServiceNow
-  hosts: acontroller.kam.home.com 
+  hosts: localhost
   gather_facts: yes
   connection: local
   vars:
