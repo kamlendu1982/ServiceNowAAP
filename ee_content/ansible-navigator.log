@@ -1,0 +1,25 @@
+2024-05-23T18:41:52.819212+00:00 ERROR 'ansible_navigator.actions.images._parse' Unable to extract introspection from stdout
+2024-05-23T18:41:52.819948+00:00 ERROR 'ansible_navigator.actions.images._parse' Image introspection failed (parsed), the return value was: Traceback (most recent call last):
+  File "/home/kashekha/.cache/ansible-navigator/image_introspect.py", line 16, in <module>
+    from typing import TypeAlias
+ImportError: cannot import name 'TypeAlias' from 'typing' (/usr/lib64/python3.9/typing.py)
+
+2024-05-23T18:42:14.106633+00:00 CRITICAL 'ansible_navigator.actions._actions.run_interactive' Subcommand 'select' encountered a fatal error.
+2024-05-23T18:42:14.106852+00:00 ERROR 'ansible_navigator.actions._actions.run_interactive' Logging an uncaught exception
+Traceback (most recent call last):
+  File "/home/kashekha/.local/lib/python3.12/site-packages/ansible_navigator/actions/_actions.py", line 155, in run_interactive
+    return run_action(app=app, interaction=interaction)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kashekha/.local/lib/python3.12/site-packages/ansible_navigator/actions/select.py", line 41, in run
+    app.steps.append(app.steps.current.select_func())  # add next
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kashekha/.local/lib/python3.12/site-packages/ansible_navigator/actions/images.py", line 312, in _build_image_content
+    value=self._images.selected["ansible"],
+          ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'ansible'
+2024-05-23T18:42:38.159183+00:00 ERROR 'ansible_navigator.actions.images._parse' Unable to extract introspection from stdout
+2024-05-23T18:42:38.159816+00:00 ERROR 'ansible_navigator.actions.images._parse' Image introspection failed (parsed), the return value was: Traceback (most recent call last):
+  File "/home/kashekha/.cache/ansible-navigator/image_introspect.py", line 16, in <module>
+    from typing import TypeAlias
+ImportError: cannot import name 'TypeAlias' from 'typing' (/usr/lib64/python3.9/typing.py)
+
