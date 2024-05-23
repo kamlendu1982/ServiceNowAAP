@@ -1,15 +1,13 @@
 ---
 - name: Create an incident in ServiceNow
   hosts: localhost
-  gather_facts: yes
+  gather_facts: true
   connection: local
   vars:
     incident_description: 'test incident'
     sn_urgency: low
     sn_impact: low
-
   tasks:
-
   - name: Create an incident in ServiceNow
     servicenow.itsm.incident:
       state: new
