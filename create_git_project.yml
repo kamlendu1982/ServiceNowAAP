@@ -19,4 +19,3 @@
     ansible.builtin.git:
       repo: https://github.com/kamlendu1982/ServiceNowAAP.git 
       dest: "/runner/tmpgit/"
-      no_log: false
