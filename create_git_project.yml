@@ -5,6 +5,7 @@
   connection: local
   vars:
     incident_description: 'test incident'
+    github_repo: https://github.com/kamlendu1982/ServiceNowAAP.git
     sn_urgency: low
     sn_impact: low
   tasks:
@@ -17,5 +18,6 @@
     environment:
       - GIT_SSL_NO_VERIFY: false 
     ansible.builtin.git:
-      repo: https://github.com/kamlendu1982/ServiceNowAAP.git 
+      repo: "{{ github_repo | ansible.builtin.regex_replace('(https?://)','\\1'+github_api_user+':'+github_api_token+'@') }}"
+      #repo: https://github.com/kamlendu1982/ServiceNowAAP.git 
       dest: "/runner/tmpgit/"
