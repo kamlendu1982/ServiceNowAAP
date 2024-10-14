@@ -1,0 +1,22 @@
+---
+- name: Create an incident in ServiceNow
+  hosts: localhost
+  gather_facts: true
+  connection: local
+  vars:
+    incident_description: 'test incident'
+    sn_urgency: low
+    sn_impact: low
+  tasks:
+  - name: create a folder
+    ansible.builtin.file:
+      path: /runner/tmpgit/
+      state: directory
+      mode: 0755
+  - name: "Clone the required repo"
+    environment:
+      - GIT_SSL_NO_VERIFY: false 
+    ansible.builtin.git:
+      repo: https://github.com/kamlendu1982/ServiceNowAAP.git 
+      dest: "/runner/tmpgit/"
+      no_log: false
