@@ -1,6 +1,6 @@
 ---
 - name: Configure VLAN
-  #hosts: cisco
+  hosts: cisco
   gather_facts: false
   tasks:
     - name: create camtest vlan
