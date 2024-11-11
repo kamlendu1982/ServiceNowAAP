@@ -4,7 +4,7 @@
   gather_facts: true
   connection: local
   vars:
-    incident_description: 'test incident'
+    incident_description: 'cisco poc incident'
     sn_urgency: low
     sn_impact: low
   tasks:
@@ -19,7 +19,8 @@
       other:
         u_operating_system: "{{ os | default(omit) }}"
         u_ip_address: "{{ ip_addr | default(omit) }}"
-        u_vm_name: "{{ inventory_hostname | default(omit) }}"
+        u_device_name: "{{ inventory_hostname | default(omit) }}"
+        u_device_typs: "cisco"
     register: new_incident
     delegate_to: localhost
 
