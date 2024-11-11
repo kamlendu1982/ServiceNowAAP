@@ -1,0 +1,34 @@
+---
+- name: Gather information from the device
+  #hosts: cisco
+  gather_facts: no
+  tasks:
+    - name: Gatehr the device's facts
+      cisco.ios.ios_facts:
+        gather_subset: all
+
+    - name: Display the ip interfaces
+      ansible.builtin.debug:
+        msg: "The interfaces are: {{ ansible_net_all_ipv4_addresses }}"
+
+    - name: Display the CPU information
+      ansible.builtin.debug:
+        msg: "The CPU utilization is {{ ansible_net_cpu_utilization }}"
+
+    - name: read the snmp strings
+      cisco.ios.ios_command:
+        commands:
+          - show run | i snmp
+      register: snmp_data
+
+    - name: display snmp data
+      ansible.builtin.debug:
+        msg: "The snmp strings are {{ snmp_data.stdout }}"
+
+    - name: Gatehr the device's vlan details
+      cisco.ios.ios_facts:
+        gather_network_resources: vlans
+
+    - name: display vlan data
+      ansible.builtin.debug:
+        msg: "The vlan details are {{ ansible_network_resources.vlans }}"

@@ -1,0 +1,21 @@
+---
+- name: Configure VLAN
+  #hosts: cisco
+  gather_facts: false
+  tasks:
+    - name: create camtest vlan
+      cisco.ios.ios_vlans:
+        state: merged
+        config:
+          - name: fddinet-default
+            vlan_id: 1004
+            state: active
+            shutdown: disabled
+      tags:
+        - never
+    - name: Create a new user
+      cisco.ios.ios_user:
+        name: ansible
+        configured_password: "ansible"
+        password_type: password
+        state: present
