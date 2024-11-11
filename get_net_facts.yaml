@@ -1,6 +1,6 @@
 ---
 - name: Gather information from the device
-  #hosts: cisco
+  hosts: cisco
   gather_facts: no
   tasks:
     - name: Gatehr the device's facts
