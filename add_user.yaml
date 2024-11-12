@@ -15,7 +15,7 @@
         config:
           - vlan_id: 111
             name: "test_vlan"
-            state: active
+            state: deleted
       tags:
         - deletevlan
 #Configure interface
