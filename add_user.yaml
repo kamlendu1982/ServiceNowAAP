@@ -9,6 +9,15 @@
           - vlan_id: 111
             name: "test_vlan"
             state: active
+    - name: delete vlan
+      ios_vlans:
+        state: deleted
+        config:
+          - vlan_id: 111
+            name: "test_vlan"
+            state: active
+      tags:
+        - deletevlan
 #Configure interface
     - name: configure interface
       ios_interfaces:
