@@ -11,11 +11,11 @@
             vlan_id: 1004
             state: active
             shutdown: disabled
-      tags:
-        - never
     - name: Create a new user
       cisco.ios.ios_user:
         name: ansible
         configured_password: "ansible"
         password_type: password
         state: present
+      tags:
+        - never
