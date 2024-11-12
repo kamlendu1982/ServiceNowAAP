@@ -3,6 +3,24 @@
   hosts: cisco
   gather_facts: false
   tasks:
+    - name: confguring vlan
+      ios_vlans:
+        config:
+          - vlan_id: 111
+            name: "test_vlan"
+            state: active
+#Configure interface
+    - name: configure interface
+      ios_interfaces:
+        config:
+          - name: "{{ interface }}"
+            description: "{{ description }}"
+            enabled: "{{ enabled }}"
+            speed: "{{ speed }}"
+            mtu: "{{ mtu }}"
+        state: "{{ state }}"
+      tags:
+        - never
     - name: create camtest vlan
       cisco.ios.ios_vlans:
         state: merged
@@ -11,6 +29,8 @@
             vlan_id: 1004
             state: active
             shutdown: disabled
+      tags:
+        - never
     - name: Create a new user
       cisco.ios.ios_user:
         name: ansible
