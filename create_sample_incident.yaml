@@ -24,8 +24,10 @@
         u_ticket_comment: ""
     register: new_incident
     delegate_to: localhost
+  - debug:
+      var: new_incident.record.number 
 
-  - vars: 
+  - set_fact: 
       incident_number: "{{ new_incident.record.number }}"
   - debug:
       var: incident_number
