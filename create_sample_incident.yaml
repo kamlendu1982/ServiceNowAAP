@@ -26,7 +26,8 @@
       delegate_to: localhost
 
     - debug:
-        var: new_incident.record.number 
+        var: new_incident.record.number
+      register: inc_number
 
     - set_fact:
         incident_number: "{{ new_incident.record.number }}"
