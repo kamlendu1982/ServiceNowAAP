@@ -1,0 +1,15 @@
+---
+- name: execute powershell scripts
+  hosts: localhost
+  vars:
+    triggerapp: "AAP"
+
+  tasks:
+    - name: execute the powershell script
+      ansible.windows.win_shell: C:\Users\Administrator\Desktop\firstPowerShell.ps1 "{{ triggerapp }}"
+      delegate_to: 44.202.138.144 
+      register: outps
+
+    - name: print out from powershell script
+      debug:
+       msg: "{{ outps.stdout_lines }}"
