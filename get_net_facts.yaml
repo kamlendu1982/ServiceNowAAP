@@ -32,3 +32,10 @@
     - name: display vlan data
       ansible.builtin.debug:
         msg: "The vlan details are {{ ansible_network_resources.vlans }}"
+
+    - name: the ticket to update
+      ansible.builtin.debug:
+        var: incident_number
+
+    - name: the device payload
+      ansible.builtin.set_fact: device_payload="{{ ansible_net_cpu_utilization }}"
