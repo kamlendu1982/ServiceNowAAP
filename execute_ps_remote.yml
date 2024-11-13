@@ -6,7 +6,7 @@
 
   tasks:
     - name: execute the powershell script
-      ansible.windows.win_shell: C:\Users\Administrator\Desktop\firstPowerShell.ps1 "{{ triggerapp }}"
+      ansible.windows.win_shell: "{{ path_ps_script }}"
       delegate_to: 44.202.138.144 
       register: outps
 
