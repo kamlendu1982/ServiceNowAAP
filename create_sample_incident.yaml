@@ -85,12 +85,11 @@
   - name: update an incident in ServiceNow
     servicenow.itsm.incident:
       state: on_hold
-      hold_reason: "{{ hostvars.cisco.snmp_data.stdout }}"
+      hold_reason: "Need a closer look"
       number: "{{ new_incident.record.number }}"
       other:
         u_operating_system: "{{ os | default(omit) }}"
         u_ip_address: "{{ ip_addr | default(omit) }}"
         u_device_name: "{{ inventory_hostname | default(omit) }}"
         u_device_typs: "cisco"
-        u_ticket_comment: "{{ hostvars.cisco.vlandata.stdout | default('sample run') }}"
     delegate_to: localhost
