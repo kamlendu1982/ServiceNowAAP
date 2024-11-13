@@ -1,13 +1,13 @@
 ---
 - name: execute powershell scripts
-  hosts: localhost
+  hosts: all
   vars:
     triggerapp: "AAP"
 
   tasks:
     - name: execute the powershell script
       ansible.windows.win_shell: "{{ path_ps_script }}"
-      delegate_to: pw02xda9.am.cpb.com
+      #delegate_to: pw02xda9.am.cpb.com
       register: outps
 
     - name: print out from powershell script
