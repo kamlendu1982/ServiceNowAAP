@@ -44,3 +44,8 @@
     - name: the device payload
       set_fact:
         device_payload: "{{ ansible_net_cpu_utilization }}"
+
+    - name: update the snow with the data
+      ansible.builtin.import_playbook: update_sample_incident.yaml
+      vars:
+        incident_number: "{{ incident_number }}"

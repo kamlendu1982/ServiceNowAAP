@@ -27,7 +27,7 @@
   - debug:
       var: new_incident.record.number 
 
-  - set_fact: 
+  - Import playbook to get device data
+    ansible.builtin.import_playbook: get_net_facts.yaml
+    vars:
       incident_number: "{{ new_incident.record.number }}"
-  - debug:
-      var: incident_number
