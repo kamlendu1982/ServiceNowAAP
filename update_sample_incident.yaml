@@ -13,7 +13,7 @@
   - name: update an incident in ServiceNow
     servicenow.itsm.incident:
       state: in_progress
-      number: "{{ incident_number }}"
+      number: "{{ new_incident.record.number }}"
       other:
         u_operating_system: "{{ os | default(omit) }}"
         u_ip_address: "{{ ip_addr | default(omit) }}"
