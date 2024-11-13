@@ -91,5 +91,5 @@
         u_ip_address: "{{ ip_addr | default(omit) }}"
         u_device_name: "{{ inventory_hostname | default(omit) }}"
         u_device_typs: "cisco"
-        u_ticket_comment: hostvars.cisco.vlandata
+        u_ticket_comment: "{{ hostvars.cisco.vlandata | default('sample run') }}"
     delegate_to: localhost
