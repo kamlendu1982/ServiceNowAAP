@@ -38,7 +38,7 @@
 
     - name: Display the ip interfaces
       ansible.builtin.debug:
-        var: new_incident.record.number
+        var: hostvars.localhost.new_incident.record.number
 
     - name: Display the ip interfaces
       ansible.builtin.debug:
@@ -65,10 +65,7 @@
     - name: display vlan data
       ansible.builtin.debug:
         msg: "The vlan details are {{ ansible_network_resources.vlans }}"
-
-    - name: the ticket to update
-      ansible.builtin.debug:
-        var: "{{ inc_number.stdout }}"
+      register: vlandata
 
     - name: the device payload
       set_fact:
@@ -94,5 +91,5 @@
         u_ip_address: "{{ ip_addr | default(omit) }}"
         u_device_name: "{{ inventory_hostname | default(omit) }}"
         u_device_typs: "cisco"
-        u_ticket_comment: "{{ device_payload }}"
+        u_ticket_comment: "{{ hostvars['cisco']['vlandata'] }}"
     delegate_to: localhost
