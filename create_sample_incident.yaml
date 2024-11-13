@@ -30,8 +30,3 @@
 
     - set_fact:
         incident_number: "{{ new_incident.record.number }}"
-
-- import_playbook: get_net_facts.yaml
-  #vars:
-  #  incident_number: "{{ new_incident.record.number }}"
-
