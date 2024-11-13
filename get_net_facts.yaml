@@ -38,5 +38,5 @@
         var: incident_number
 
     - name: the device payload
-      ansible.builtin.set_fact:
+      ansible.utils.update_fact:
         device_payload: "{{ ansible_net_cpu_utilization }}"
