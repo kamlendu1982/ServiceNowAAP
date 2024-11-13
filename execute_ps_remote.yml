@@ -6,7 +6,7 @@
 
   tasks:
     - name: execute the powershell script
-      ansible.windows.win_shell: "{{ path_ps_script }}" >> C:\Temp-Ansible\temp.txt
+      ansible.windows.win_shell: "{{ path_ps_script }}"
       #delegate_to: pw02xda9.am.cpb.com
       register: outps
 
