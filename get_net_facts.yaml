@@ -9,6 +9,10 @@
 
     - name: Display the ip interfaces
       ansible.builtin.debug:
+        var: new_incident.record.number
+
+    - name: Display the ip interfaces
+      ansible.builtin.debug:
         msg: "The interfaces are: {{ ansible_net_all_ipv4_addresses }}"
 
     - name: Display the CPU information
