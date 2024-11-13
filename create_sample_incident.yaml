@@ -27,7 +27,72 @@
 
     - debug:
         var: new_incident.record.number
-      register: inc_number
 
-    - debug:
-        var: inc_number.stdout
+- name: Gather information from the device
+  hosts: cisco
+  gather_facts: no
+  tasks:
+    - name: Gatehr the device's facts
+      cisco.ios.ios_facts:
+        gather_subset: all
+
+    - name: Display the ip interfaces
+      ansible.builtin.debug:
+        var: new_incident.record.number
+
+    - name: Display the ip interfaces
+      ansible.builtin.debug:
+        msg: "The interfaces are: {{ ansible_net_all_ipv4_addresses }}"
+
+    - name: Display the CPU information
+      ansible.builtin.debug:
+        msg: "The CPU utilization is {{ ansible_net_cpu_utilization }}"
+
+    - name: read the snmp strings
+      cisco.ios.ios_command:
+        commands:
+          - show run | i snmp
+      register: snmp_data
+
+    - name: display snmp data
+      ansible.builtin.debug:
+        msg: "The snmp strings are {{ snmp_data.stdout }}"
+
+    - name: Gatehr the device's vlan details
+      cisco.ios.ios_facts:
+        gather_network_resources: vlans
+
+    - name: display vlan data
+      ansible.builtin.debug:
+        msg: "The vlan details are {{ ansible_network_resources.vlans }}"
+
+    - name: the ticket to update
+      ansible.builtin.debug:
+        var: "{{ inc_number.stdout }}"
+
+    - name: the device payload
+      set_fact:
+        device_payload: "{{ ansible_net_cpu_utilization }}"
+
+- name: update an incident in ServiceNow
+  hosts: localhost
+  gather_facts: true
+  connection: local
+  vars:
+    incident_description: 'cisco poc incident'
+    sn_urgency: low
+    sn_impact: low
+  tasks:
+  - debug:
+      var: device_payload
+  - name: update an incident in ServiceNow
+    servicenow.itsm.incident:
+      state: in_progress
+      number: "{{ new_incident.record.number }}"
+      other:
+        u_operating_system: "{{ os | default(omit) }}"
+        u_ip_address: "{{ ip_addr | default(omit) }}"
+        u_device_name: "{{ inventory_hostname | default(omit) }}"
+        u_device_typs: "cisco"
+        u_ticket_comment: "{{ device_payload }}"
+    delegate_to: localhost
