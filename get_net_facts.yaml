@@ -7,7 +7,7 @@
       cisco.ios.ios_facts:
         gather_subset: all
 
-    - name: Display the ip interfaces
+    - name: the incident to update after operation 
       ansible.builtin.debug:
         var: incident_number 
 
@@ -37,15 +37,16 @@
       ansible.builtin.debug:
         msg: "The vlan details are {{ ansible_network_resources.vlans }}"
 
-    - name: the ticket to update
-      ansible.builtin.debug:
-        var: "{{ inc_number.stdout }}"
-
-    - name: the device payload
+    - name: the device payload attachment
       lineinfile:
         line: "The CPU utilization is {{ ansible_net_cpu_utilization }}"
         path: /tmp/cpu_data_cisco.txt
         create: yes
+
+    - name: device playload data
+      ansible.builtin.set_stats:
+        date:
+          device_payload: "The vlan details are {{ ansible_network_resources.vlans }}"
 
 #- name: update the snow with the data
 #  ansible.builtin.import_playbook: update_sample_incident.yaml
