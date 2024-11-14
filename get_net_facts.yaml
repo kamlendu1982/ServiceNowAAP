@@ -9,7 +9,7 @@
 
     - name: Display the ip interfaces
       ansible.builtin.debug:
-        var: new_incident.record.number
+        var: incident_number 
 
     - name: Display the ip interfaces
       ansible.builtin.debug:
@@ -42,10 +42,12 @@
         var: "{{ inc_number.stdout }}"
 
     - name: the device payload
-      set_fact:
-        device_payload: "{{ ansible_net_cpu_utilization }}"
+      lineinfile:
+        line: "The CPU utilization is {{ ansible_net_cpu_utilization }}"
+        path: /tmp/cpu_data_cisco.txt
+        create: yes
 
-- name: update the snow with the data
-  ansible.builtin.import_playbook: update_sample_incident.yaml
-  vars:
-    incident_number: "{{ incident_number }}"
+#- name: update the snow with the data
+#  ansible.builtin.import_playbook: update_sample_incident.yaml
+#  vars:
+#    incident_number: "{{ incident_number }}"

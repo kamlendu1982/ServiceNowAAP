@@ -12,8 +12,10 @@
       var: device_payload 
   - name: update an incident in ServiceNow
     servicenow.itsm.incident:
-      state: in_progress
-      number: "{{ new_incident.record.number }}"
+      state: on_hold
+      attachments:
+        - path: /tmp/cpu_data_cisco.txt
+      number: "{{ incident_number }}"
       other:
         u_operating_system: "{{ os | default(omit) }}"
         u_ip_address: "{{ ip_addr | default(omit) }}"
