@@ -30,5 +30,5 @@
 
     - name: export incident number as artifact
       ansible.builtin.set_stats:
-        date:
+        data:
           incident_number: "{{ new_incident.record.number }}"
