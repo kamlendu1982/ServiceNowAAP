@@ -12,7 +12,7 @@
       var: device_payload 
   - name: update an incident in ServiceNow
     servicenow.itsm.incident:
-      state: on_hold
+      state: in_progress
       attachments:
         - path: /tmp/cpu_data_cisco.txt
       number: "{{ incident_number }}"
