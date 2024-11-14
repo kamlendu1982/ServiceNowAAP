@@ -45,7 +45,7 @@
 
     - name: device playload data
       ansible.builtin.set_stats:
-        date:
+        data:
           device_payload: "The vlan details are {{ ansible_network_resources.vlans }}"
 
 #- name: update the snow with the data
