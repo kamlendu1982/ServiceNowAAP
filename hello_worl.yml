@@ -1,7 +1,11 @@
 - name: Hello World Sample
   hosts: all
+  ignore_unreachable: true
   gather_facts: true
   tasks:
     - name: Hello Message
       debug:
         msg: "Hello World!"
+    - name: not ignore Message
+      debug:
+        msg: "not ignore Hello World!"
