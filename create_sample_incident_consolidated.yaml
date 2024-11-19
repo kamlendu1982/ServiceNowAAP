@@ -1,0 +1,99 @@
+---
+- name: Create an incident in ServiceNow
+  hosts: localhost
+  gather_facts: true
+  connection: local
+  vars:
+    incident_description: 'cisco poc incident'
+    sn_urgency: low
+    sn_impact: low
+  tasks:
+    - name: Create an incident in ServiceNow
+      servicenow.itsm.incident:
+        state: new
+        description: "{{ sn_description | default(omit) }}"
+        short_description: "{{ incident_description }}"
+        caller: admin
+        urgency: "{{ sn_urgency }}"
+        impact: "{{ sn_impact }}"
+        other:
+          u_operating_system: "{{ os | default(omit) }}"
+          u_ip_address: "{{ ip_addr | default(omit) }}"
+          u_device_name: "{{ inventory_hostname | default(omit) }}"
+          u_device_typs: "cisco"
+          u_ticket_comment: ""
+      register: new_incident
+      delegate_to: localhost
+
+    - debug:
+        var: new_incident.record.number
+
+- name: Gather information from the device
+  hosts: cisco
+  gather_facts: no
+  tasks:
+    - name: Gatehr the device's facts
+      cisco.ios.ios_facts:
+        gather_subset: all
+
+    - name: Display the ip interfaces
+      ansible.builtin.debug:
+        var: hostvars.localhost.new_incident.record.number
+
+    - name: Display the ip interfaces
+      ansible.builtin.debug:
+        msg: "The interfaces are: {{ ansible_net_all_ipv4_addresses }}"
+
+    - name: Display the CPU information
+      ansible.builtin.debug:
+        msg: "The CPU utilization is {{ ansible_net_cpu_utilization }}"
+
+    - name: read the snmp strings
+      cisco.ios.ios_command:
+        commands:
+          - show run | i snmp
+      register: snmp_data
+
+    - name: display snmp data
+      ansible.builtin.debug:
+        msg: "The snmp strings are {{ snmp_data.stdout }}"
+
+    - name: Gatehr the device's vlan details
+      cisco.ios.ios_facts:
+        gather_network_resources: vlans
+
+    - name: display vlan data
+      ansible.builtin.debug:
+        msg: "The vlan details are {{ ansible_network_resources.vlans }}"
+      register: vlandata
+
+    - name: the device payload attachment
+      lineinfile:
+        line: "The CPU utilization is {{ ansible_net_cpu_utilization }}"
+        path: /tmp/cpu_data_cisco.txt
+        create: yes
+
+- name: update an incident in ServiceNow
+  hosts: localhost
+  gather_facts: true
+  connection: local
+  vars:
+    incident_description: 'cisco poc incident'
+    sn_urgency: low
+    sn_impact: low
+  tasks:
+  - debug:
+      var: device_payload
+  - name: update an incident in ServiceNow
+    servicenow.itsm.incident:
+      state: on_hold
+      attachments:
+        - path: /tmp/cpu_data_cisco.txt
+      hold_reason: "Need a closer look"
+      number: "{{ new_incident.record.number }}"
+      other:
+        u_operating_system: "{{ os | default(omit) }}"
+        u_ip_address: "{{ ip_addr | default(omit) }}"
+        u_device_name: "{{ inventory_hostname | default(omit) }}"
+        u_device_typs: "cisco"
+    delegate_to: localhost

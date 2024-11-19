@@ -1,0 +1,28 @@
+---
+- name: Create an incident in ServiceNow
+  hosts: localhost
+  gather_facts: true
+  connection: local
+  vars:
+    sn_urgency: low
+    sn_impact: low
+  tasks:
+    - name: get the host id
+      ansible.builtin.uri:
+        url: https://controller.kam.home.com/api/v2/hosts/?search=host_delete
+        method: GET
+        headers:
+          Content-Type: application/json
+      register: host_id
+      delegate_to: localhost
+
+    - debug:
+        var: host_id.results.id
+
+    - name: delete the host from host metrices
+      ansible.builtin.uri:
+        url: https://controller.kam.home.com/api/v2/host_metrices/"{{ host_id.results.id }}"/
+        method: DELETE
+        headers:
+          Content-Type: application/json
+      delegate_to: localhost
