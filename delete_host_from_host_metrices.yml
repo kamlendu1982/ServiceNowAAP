@@ -1,5 +1,5 @@
 ---
-- name: Create an incident in ServiceNow
+- name: deleting host from host metrics 
   hosts: localhost
   gather_facts: true
   connection: local
@@ -19,7 +19,7 @@
         headers:
           Content-Type: application/json
           Authorization: "Basic {{ (username + ':' + password) | b64encode }}"
-          #Authorization: "Basic {{ (username + ':' + password) | b64encode }}"
+          #Authorization: "Basic {{ (ansible_user + ':' + ansible_password) | b64encode }}"
         validate_certs: false
       register: host_id
       delegate_to: localhost
@@ -35,7 +35,7 @@
         method: DELETE
         headers:
           Content-Type: application/json
-          Authorization: "Basic {{ (username + ':' + password) | b64encode }}"
+          Authorization: "Basic {{ (ansible_user + ':' + ansible_password) | b64encode }}"
         validate_certs: false
         status_code: 204
       delegate_to: localhost
