@@ -13,6 +13,8 @@
       ansible.builtin.uri:
         url: "https://{{ controller_url }}"
         validate_certs: false
+      tags:
+        - all
 
     - name: get the host id
       ansible.builtin.uri:
@@ -29,9 +31,13 @@
         validate_certs: false
       register: host_id
       delegate_to: localhost
+      tags:
+        - all
 
     - debug:
         var: host_id.json.results[0].id
+      tags:
+        - all
 
     - name: delete the host from host metrices
       ansible.builtin.uri:
