@@ -6,23 +6,38 @@
   vars:
     sn_urgency: low
     sn_impact: low
+    #host_delete: "192.168.122.56"
+    #username: admin
+    #password: admin123
   tasks:
     - name: get the host id
       ansible.builtin.uri:
-        url: https://controller.kam.home.com/api/v2/hosts/?search=host_delete
+        #url: https://controller.kam.home.com/api/v2/hosts/?search=host_delete
+        #url: "https://192.168.122.216/api/v2/hosts/?search={{ host_delete }}"
+        url: "https://192.168.122.216/api/v2/host_metrics/?search={{ host_delete }}"
         method: GET
         headers:
           Content-Type: application/json
+          Authorization: "Basic {{ (username + ':' + password) | b64encode }}"
+          #Authorization: "Basic {{ (username + ':' + password) | b64encode }}"
+        validate_certs: false
       register: host_id
       delegate_to: localhost
 
     - debug:
-        var: host_id.results.id
+        var: host_id.json.results[0].id
 
     - name: delete the host from host metrices
       ansible.builtin.uri:
-        url: https://controller.kam.home.com/api/v2/host_metrices/"{{ host_id.results.id }}"/
+        #url: https://controller.kam.home.com/api/v2/host_metrics/"{{ host_id.results.id }}"/
+        #url: https://192.168.122.216/api/v2/host_metrics/"{{ host_id.results.id }}"/
+        url: "https://192.168.122.216/api/v2/host_metrics/{{ host_id.json.results[0].id }}/"
         method: DELETE
         headers:
           Content-Type: application/json
+          Authorization: "Basic {{ (username + ':' + password) | b64encode }}"
+        validate_certs: false
+        status_code: 204
       delegate_to: localhost
+      tags:
+        - never
