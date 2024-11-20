@@ -10,6 +10,10 @@
     ansible_user: admin
     ansible_password: admin123
   tasks:
+    - name: check reachablity
+      ansible.builtin.uri:
+        url: https://192.168.122.216
+
     - name: get the host id
       ansible.builtin.uri:
         #url: https://controller.kam.home.com/api/v2/hosts/?search=host_delete
