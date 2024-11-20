@@ -3,15 +3,16 @@
   hosts: localhost
   gather_facts: true
   connection: local
-  #vars:
+  vars:
+    controller_url: "student1.7qsfr.example.opentlc.com"
     #host_delete: "192.168.122.56"
     #ansible_user: admin
     #ansible_password: admin123
   tasks:
     - name: check reachablity
       ansible.builtin.uri:
-        #url: https://192.168.122.216
-        url: "{{ controller_url }}"
+        url: "https://{{ controller_url }}"
+        validate_certs: false
 
     - name: get the host id
       ansible.builtin.uri:
