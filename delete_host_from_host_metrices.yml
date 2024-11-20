@@ -6,15 +6,17 @@
   vars:
     sn_urgency: low
     sn_impact: low
-    #host_delete: "192.168.122.56"
-    #username: admin
-    #password: admin123
+    host_delete: "192.168.122.56"
+    ansible_user: admin
+    ansible_password: admin123
   tasks:
     - name: get the host id
       ansible.builtin.uri:
         #url: https://controller.kam.home.com/api/v2/hosts/?search=host_delete
         #url: "https://192.168.122.216/api/v2/hosts/?search={{ host_delete }}"
         url: "https://192.168.122.216/api/v2/host_metrics/?search={{ host_delete }}"
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
         method: GET
         headers:
           Content-Type: application/json
