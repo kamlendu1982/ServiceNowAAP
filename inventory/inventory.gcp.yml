@@ -1,7 +1,7 @@
 ---
 plugin: gcp_compute
 zones:
-  - us-east1
+  - us-east1-c
 projects:
   - openenv-rdmff
 filters:
