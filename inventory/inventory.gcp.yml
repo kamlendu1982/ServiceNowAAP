@@ -1,3 +1,4 @@
+---
 plugin: gcp_compute
 zones:
   - us-east1
