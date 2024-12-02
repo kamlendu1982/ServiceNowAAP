@@ -1,7 +1,6 @@
 ---
 - hosts: all
   gather_facts: false
-  connection: gcp_ssh
   tasks:
     - name: "Retrieve hostname"
       changed_when: false
