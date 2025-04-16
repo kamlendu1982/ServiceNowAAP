@@ -6,8 +6,8 @@ CSV_FILE_NAME = 'inventory.csv'
 YAML_FILE_NAME = 'hosts.yml'
 yaml_inventory = {
   "all": {
-    "hosts": {
-    }
+    "hosts": [
+    ]
   }
 }
 
@@ -27,12 +27,12 @@ try:
             #csv_dictionary[index].update(ansible_user)
             #csv_dictionary[index].update(ansible_ssh_pass)
             host_dictionary[hostname] = csv_dictionary[index]
-            yaml_inventory['all']['hosts'].update(host_dictionary)
-    for newkey in yaml_inventory['all']['hosts']:
-        yaml_inventory['all']['hosts'][newkey]['ansible_ssh_port'] = int( yaml_inventory['all']['hosts'][newkey]['ansible_ssh_port'])
+            yaml_inventory['all']['hosts'].append(host_dictionary)
+    #for newkey in yaml_inventory['all']['hosts']:
+    #    yaml_inventory['all']['hosts'][newkey]['ansible_ssh_port'] = int( yaml_inventory['all']['hosts'][newkey]['ansible_ssh_port'])
     #print(yaml.dump(yaml_inventory))
-    print(json.dumps(yaml_inventory))
-    #with open(f"{file_path}/{YAML_FILE_NAME}", 'w', encoding='utf8') as outfile:
-    #    yaml.dump(yaml_inventory, outfile, default_flow_style=False, allow_unicode=True)
+    print(json.dumps(yaml_inventory, indent=2))
+    with open(f"{file_path}/{YAML_FILE_NAME}", 'w', encoding='utf8') as outfile:
+        yaml.dump(yaml_inventory, outfile, default_flow_style=False, allow_unicode=True)
 except Exception as e:
     print(f"ERROR in Execution: {e}")
