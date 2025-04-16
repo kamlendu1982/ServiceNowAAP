@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  vars:
+    csv_file: source_inv.csv
+    #yaml_file: /path/to/yaml/file.yaml
+
+  tasks:
+    - name: read from csv
+      community.general.read_csv:
+        path: "{{ csv_file }}"
+      register: inv_csv
+
+    - ansible.builtin.debug:
+       msg: "{{ inv_csv.list }}"
