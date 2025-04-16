@@ -1,3 +1,4 @@
-host,ansible_host,ansible_ssh_port,ansible_network_os,ansible_connection
-cisco_ios_sandbox,sandbox-iosxe-latest-1.cisco.com,22,ios,network_cli
-juniper_junos_sanbox,66.129.234.213,30002,junipernetworks.junos.junos,network_cli
+hostname,group,ansible_user
+192.168.1.10,web,admin
+192.168.1.11,web,admin
+192.168.1.20,db,postgres
