@@ -5,7 +5,7 @@
   tasks:
     - name: Hello Message
       debug:
-        msg: "Hello World!"
+        msg: "Hello World! the first password is {{ password1 }}"
     - name: not ignore Message
       debug:
-        msg: "not ignore Hello World!"
+        msg: "not ignore Hello World! the second password is {{ password2 }}"
