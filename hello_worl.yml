@@ -1,5 +1,5 @@
 - name: Hello World Sample
-  hosts: localhost
+  hosts: all
   #ignore_unreachable: true
   gather_facts: true
   tasks:
