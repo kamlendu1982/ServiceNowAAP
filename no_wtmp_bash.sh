@@ -1,3 +1,3 @@
 #!/bin/bash
 unset HISTFILE
-exec bash
+exec /bin/bash
