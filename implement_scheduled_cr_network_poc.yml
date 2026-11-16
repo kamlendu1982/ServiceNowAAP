@@ -43,7 +43,7 @@
         number: "{{ change_number }}"
         sysparm_display_value: all
       register: snow_change
-      no_log: true
+      #no_log: true
 
     - name: Fail if the Change Request was not found
       ansible.builtin.assert:
