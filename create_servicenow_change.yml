@@ -1,0 +1,103 @@
+---
+# Creates one ServiceNow Normal Change Request from an AAP job template.
+#
+# Prerequisites
+# - Add the servicenow.itsm collection to the execution environment.
+# - Create an AAP custom credential that injects SN_HOST, SN_USERNAME, and
+#   SN_PASSWORD as environment variables. Do not put those values in this file.
+# - Create the optional u_aap_job_template_id and u_github_pr custom fields on
+#   the ServiceNow change_request table if the scheduled job will use them.
+#
+# Required launch variables (normally defined as an AAP survey):
+#   github_repository, github_pr_number, github_pr_url, git_commit_sha,
+#   jira_id, change_window_start, change_window_end, aap_job_template_id
+#
+# ServiceNow date format: YYYY-MM-DD HH:MM:SS, in the timezone agreed with the
+# ServiceNow change-management team.
+
+- name: Create a ServiceNow Change Request for an approved pull request
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    snow_instance:
+      host: "{{ lookup('ansible.builtin.env', 'SN_HOST') }}"
+      username: "{{ lookup('ansible.builtin.env', 'SN_USERNAME') }}"
+      password: "{{ lookup('ansible.builtin.env', 'SN_PASSWORD') }}"
+      validate_certs: true
+
+    # Adjust to match your ServiceNow teams and approved change model.
+    snow_assignment_group: "Network Operations"
+    change_type: normal
+
+  tasks:
+    - name: Validate required launch variables
+      ansible.builtin.assert:
+        that:
+          - snow_instance.host | length > 0
+          - snow_instance.username | length > 0
+          - snow_instance.password | length > 0
+          - github_repository | default('') | length > 0
+          - github_pr_number | default('') | string | length > 0
+          - github_pr_url | default('') | length > 0
+          - git_commit_sha | default('') | length > 0
+          - jira_id | default('') | length > 0
+          - change_window_start | default('') | length > 0
+          - change_window_end | default('') | length > 0
+          - aap_job_template_id | default('') | string | length > 0
+        fail_msg: >-
+          Supply the required AAP survey/extra variables and configure the
+          ServiceNow credential environment variables.
+      no_log: true
+
+    - name: Create the ServiceNow Normal Change Request
+      servicenow.itsm.change_request:
+        instance: "{{ snow_instance }}"
+        state: new
+        type: "{{ change_type }}"
+        assignment_group: "{{ snow_assignment_group }}"
+        short_description: >-
+          Network change for {{ github_repository }} PR #{{ github_pr_number }}
+        description: |
+          Change requested by an approved GitHub pull request.
+
+          Repository: {{ github_repository }}
+          Pull request: #{{ github_pr_number }}
+          Pull request URL: {{ github_pr_url }}
+          Commit SHA: {{ git_commit_sha }}
+          Jira ID: {{ jira_id }}
+          AAP job template ID: {{ aap_job_template_id }}
+          Requested AAP inventory: {{ aap_inventory | default('not specified') }}
+
+          The ServiceNow approval process and approved change window govern
+          when this automation may run.
+        other:
+          # Standard Change Request fields for the planned window.
+          start_date: "{{ change_window_start }}"
+          end_date: "{{ change_window_end }}"
+          implementation_plan: >-
+            Launch AAP job template {{ aap_job_template_id }} after ServiceNow
+            approval and only within the planned change window.
+          backout_plan: >-
+            Use the AAP rollback workflow or restore the previously approved
+            network configuration.
+          test_plan: >-
+            Validate network reachability and the applicable service-health
+            checks after the AAP job completes.
+
+          # These two fields are custom fields. Rename or remove them if your
+          # ServiceNow instance uses different technical field names.
+          u_aap_job_template_id: "{{ aap_job_template_id }}"
+          u_github_pr: "{{ github_repository }}#{{ github_pr_number }}"
+      register: snow_change
+      no_log: true
+
+    - name: Publish the created change details to the AAP job output
+      ansible.builtin.set_stats:
+        data:
+          servicenow_change_number: "{{ snow_change.record.number }}"
+          servicenow_change_sys_id: "{{ snow_change.record.sys_id }}"
+
+    - name: Display the created change number
+      ansible.builtin.debug:
+        msg: "Created ServiceNow Change Request {{ snow_change.record.number }}"
