@@ -34,6 +34,8 @@
           Provide change_number and attach a ServiceNow credential that injects
           SN_HOST, SN_USERNAME, and SN_PASSWORD.
       no_log: true
+      tags:
+        - never
 
     - name: Retrieve the ServiceNow Change Request
       servicenow.itsm.change_request_info:
