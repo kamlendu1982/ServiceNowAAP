@@ -1,0 +1,64 @@
+---
+# Read-only test implementation for an AAP job template launched by ServiceNow.
+# It retrieves the ServiceNow Change Request supplied by the scheduler and
+# displays its record in the AAP job output. It makes no infrastructure changes.
+#
+# Prerequisites
+# - Include servicenow.itsm in the execution environment.
+# - Attach the same ServiceNow custom credential used by the CR-creation
+#   template. It must inject SN_HOST, SN_USERNAME, and SN_PASSWORD.
+# - Pass change_number as an AAP survey variable or from the ServiceNow launch
+#   payload (for example: CHG0012345).
+
+- name: Test network change implementation - display ServiceNow CR
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    snow_instance:
+      host: "{{ lookup('ansible.builtin.env', 'SN_HOST') }}"
+      username: "{{ lookup('ansible.builtin.env', 'SN_USERNAME') }}"
+      password: "{{ lookup('ansible.builtin.env', 'SN_PASSWORD') }}"
+      validate_certs: true
+
+  tasks:
+    - name: Validate the launch input
+      ansible.builtin.assert:
+        that:
+          - change_number is defined
+          - change_number | string | length > 0
+          - snow_instance.host | length > 0
+          - snow_instance.username | length > 0
+          - snow_instance.password | length > 0
+        fail_msg: >-
+          Provide change_number and attach a ServiceNow credential that injects
+          SN_HOST, SN_USERNAME, and SN_PASSWORD.
+      no_log: true
+
+    - name: Retrieve the ServiceNow Change Request
+      servicenow.itsm.change_request_info:
+        instance: "{{ snow_instance }}"
+        number: "{{ change_number }}"
+        sysparm_display_value: all
+      register: snow_change
+      no_log: true
+
+    - name: Fail if the Change Request was not found
+      ansible.builtin.assert:
+        that:
+          - snow_change.records | length == 1
+        fail_msg: >-
+          Expected one Change Request for {{ change_number }}, but found
+          {{ snow_change.records | length }}.
+
+    - name: Display the Change Request details - read only
+      ansible.builtin.debug:
+        msg: "{{ snow_change.records[0] | to_nice_json }}"
+
+    - name: Set AAP job statistics
+      ansible.builtin.set_stats:
+        data:
+          servicenow_change_number: "{{ snow_change.records[0].number }}"
+          servicenow_change_sys_id: "{{ snow_change.records[0].sys_id }}"
+          servicenow_change_approval: "{{ snow_change.records[0].approval }}"
+          servicenow_change_state: "{{ snow_change.records[0].state }}"
