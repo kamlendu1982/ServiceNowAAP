@@ -1,6 +1,6 @@
 - name: Hello World Sample
   hosts: all
-  ignore_unreachable: true
+  #ignore_unreachable: true
   gather_facts: true
   tasks:
     - name: Hello Message
