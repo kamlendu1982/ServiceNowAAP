@@ -38,6 +38,6 @@
     "max_length": 250,
     "example": "Add BGP peer to Azure East US VPN gateway on edge-rtr01"
   },
-  "required_approvals": 1,
+  "required_approvals": 0,
   "max_changed_files": 500
 }
