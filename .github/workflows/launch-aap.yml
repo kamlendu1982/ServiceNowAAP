@@ -17,7 +17,7 @@ jobs:
   launch:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    environment: production
+    environment: GitOps-Poc
     steps:
       - name: Check out the merged commit
         uses: actions/checkout@v4
