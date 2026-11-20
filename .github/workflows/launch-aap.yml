@@ -1,0 +1,74 @@
+name: Launch AAP job template
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: gitops-aap-trigger
+  cancel-in-progress: false
+
+jobs:
+  launch:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Check out the merged commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          sparse-checkout: .github
+          persist-credentials: false
+
+      # Re-checks ServiceNow, Jira, Feature, Description and the approval,
+      # then writes all the extra vars to a file.
+      - name: Check change details and approvals
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          python3 .github/scripts/change_metadata.py
+          --policy .github/change-policy.json
+          merged --output "$RUNNER_TEMP/gitops_extra_vars.json"
+
+      - name: Build the request body
+        env:
+          AAP_LIMIT: ${{ vars.AAP_LIMIT }}
+        run: |
+          jq -n \
+            --arg limit "$AAP_LIMIT" \
+            --slurpfile ev "$RUNNER_TEMP/gitops_extra_vars.json" \
+            '{extra_vars: $ev[0]} + (if $limit == "" then {} else {limit: $limit} end)' \
+            > "$RUNNER_TEMP/payload.json"
+          cat "$RUNNER_TEMP/payload.json"
+
+      - name: Launch AAP job template
+        env:
+          AAP_URL: ${{ secrets.AAP_URL }}
+          AAP_TOKEN: ${{ secrets.AAP_TOKEN }}
+          TEMPLATE_ID: ${{ vars.AAP_TEMPLATE_ID }}
+        run: |
+          http_code=$(curl -sS -k -o "$RUNNER_TEMP/response.json" -w '%{http_code}' \
+            -X POST \
+            -H "Authorization: Bearer ${AAP_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data @"$RUNNER_TEMP/payload.json" \
+            "${AAP_URL}/api/controller/v2/job_templates/${TEMPLATE_ID}/launch/")
+
+          if [ "$http_code" != "201" ] && [ "$http_code" != "200" ]; then
+            echo "::error::AAP launch failed (HTTP $http_code): $(cat "$RUNNER_TEMP/response.json")"
+            exit 1
+          fi
+
+          ignored=$(jq -c '.ignored_fields // {}' "$RUNNER_TEMP/response.json")
+          if [ "$ignored" != "{}" ]; then
+            echo "::error::AAP ignored these fields: $ignored. Turn on 'Prompt on launch' for them on the job template."
+            exit 1
+          fi
+
+          echo "AAP job $(jq -r '.id' "$RUNNER_TEMP/response.json") started."

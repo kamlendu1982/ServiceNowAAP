@@ -1,0 +1,43 @@
+{
+  "_comment": "Rules for the change details every pull request to main must carry. Edit through a pull request; the check always runs the version on main.",
+  "servicenow": {
+    "label": "ServiceNow",
+    "aliases": ["servicenow", "service-now", "snow"],
+    "pattern": "^(CHG|RITM|REQ)[0-9]{7}$",
+    "example": "CHG0034567"
+  },
+  "jira": {
+    "label": "Jira",
+    "aliases": ["jira"],
+    "pattern": "^[A-Z][A-Z0-9]{1,9}-[0-9]+$",
+    "projects": [],
+    "example": "NETOPS-123"
+  },
+  "feature": {
+    "label": "Feature",
+    "aliases": ["feature", "features"],
+    "allowed": [
+      "base_config",
+      "banner",
+      "ntp",
+      "logging",
+      "aaa",
+      "interfaces",
+      "static_routes",
+      "ipsec_tunnel",
+      "bgp",
+      "os_upgrade"
+    ],
+    "allow_multiple": true,
+    "example": "bgp"
+  },
+  "description": {
+    "label": "Description",
+    "aliases": ["description"],
+    "min_length": 15,
+    "max_length": 250,
+    "example": "Add BGP peer to Azure East US VPN gateway on edge-rtr01"
+  },
+  "required_approvals": 1,
+  "max_changed_files": 500
+}

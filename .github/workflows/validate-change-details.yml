@@ -1,0 +1,38 @@
+# Blocks a pull request to main until its description carries the change details:
+#   ServiceNow, Jira, Feature and Description.
+# Make "Validate change details" a required status check on main (see README).
+
+name: Change details
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, edited, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write   # to keep one result comment on the pull request
+
+concurrency:
+  group: change-details-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate change details
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Run the policy and script from main, not from the pull request,
+      # so a pull request cannot loosen the rules it is checked against.
+      - name: Check out the rules from main
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          sparse-checkout: .github
+          persist-credentials: false
+
+      - name: Validate change details
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/change_metadata.py --policy .github/change-policy.json validate-pr --comment
